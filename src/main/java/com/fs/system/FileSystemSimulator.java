@@ -2,16 +2,18 @@ package com.fs.system;
 
 import com.fs.model.Directory;
 import com.fs.model.File;
-
 import java.util.List;
 
 public class FileSystemSimulator {
     private Directory root;
     private Directory currentDirectory;
 
+    private Journal journal;
+
     public FileSystemSimulator() {
         this.root = new Directory("/");
         this.currentDirectory = this.root;
+        this.journal = new Journal();
     }
     public void createDirectory(String name) {
         if (currentDirectory.getSubDirectoryByName(name) != null) {
@@ -22,6 +24,8 @@ public class FileSystemSimulator {
         Directory newDir = new Directory(name);
         currentDirectory.addDirectory(newDir);
         System.out.println("Directory '" + name + "' created.");
+
+        journal.log("CREATE_DIR", "Created directory '" + name + "' in " + currentDirectory.getName());
         
     }
 
@@ -34,6 +38,8 @@ public class FileSystemSimulator {
         File newFile = new File(name, content);
         currentDirectory.addFile(newFile);
         System.out.println("File '" + name + "' created.");
+
+        journal.log("CREATE_FILE", "Created file '" + name + "' in " + currentDirectory.getName());
         
     }
 
