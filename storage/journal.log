@@ -1,2 +1,4 @@
 [2025-11-20 20:01:41] [CREATE_DIR] Created directory 'testeJournal' in /
 [2025-11-20 20:01:48] [CREATE_FILE] Created file 'log.txt' in /
+[2025-11-20 20:10:54] [CREATE_DIR] Created directory 'pasta_secreta' in /
+[2025-11-20 20:11:04] [CREATE_FILE] Created file 'senha.txt' in pasta_secreta
