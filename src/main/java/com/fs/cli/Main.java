@@ -54,6 +54,21 @@ public class Main {
                     }
                     break;
 
+                case "rm":
+                    if (parts.length < 2) System.out.println("Usage: rm <name>");
+                    else fs.delete(parts[1]);
+                    break;
+
+                case "mv": 
+                    if (parts.length < 3) System.out.println("Usage: mv <oldName> <newName>");
+                    else fs.rename(parts[1], parts[2]);
+                    break;
+
+                case "cp":
+                    if (parts.length < 3) System.out.println("Usage: cp <sourceFile> <destFile>");
+                    else fs.copyFile(parts[1], parts[2]);
+                    break;
+
                 case "help":
                     System.out.println("Available commands:");
                     System.out.println("  mkdir <name>          - Create a directory");

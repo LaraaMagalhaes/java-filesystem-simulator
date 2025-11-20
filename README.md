@@ -26,36 +26,35 @@ Journaling is a technique used to ensure data integrity in case of failures (suc
 ### Data Structure
 The simulator uses a **Tree** structure to represent the file system in memory:
 * **Root Node:** The `/` directory is the base of the tree.
-* **Internal Nodes (Directory):** Contain a list of children, which can be other directories or files.
+* **Internal Nodes (Directory):** Contain a list of children.
 * **Leaf Nodes (File):** Contain the final data (text content).
 
 Persistence is achieved through **Object Serialization (Java Serialization)**, saving the entire object tree into the `filesystem.dat` file.
 
 ### Journaling Implementation
-The `Journal` class manages a text file (`journal.log`). The flow of a safe operation is:
-1.  **Registration:** Writes `PENDING | COMMAND | PATH` to the log.
-2.  **Execution:** The system alters the tree structure in memory and saves it to `filesystem.dat`.
-3.  **Confirmation:** Writes `COMMIT | COMMAND | PATH` to the log.
-
+The `Journal` class manages a text file (`storage/journal.log`).
+1.  **Registration:** System captures the intent.
+2.  **Execution:** System alters the tree structure in memory.
+3.  **Logging:** System writes the operation (e.g., `CREATE`, `DELETE`) to the log file.
 ---
 
 ## Part 3: Java Implementation
 
-The project was divided into three main packages to organize responsibilities (Simplified MVC Pattern):
+The project uses a Simplified MVC Pattern:
 
 ### 1. Package `com.fs.model`
-* **`Directory.java`:** Represents a folder. It has an `ArrayList<Object>` to store its children and methods to add/remove items.
-* **`File.java`:** Represents a file. It has attributes such as `content` (String), `size`, and a reference to the parent directory.
+* **`Directory.java`:** Represents a folder. 
+* **`File.java`**: Represents a file with attributes like name and content.
 
 ### 2. Package `com.fs.system`
 * **`FileSystemSimulator.java`:** The "brain" of the system.
     * Manages navigation (`cd`).
-    * Executes commands (`mkdir`, `touch`, `rm`, `cp`, `mv`).
-    * Handles persistence (Save/Load).
-* **`Journal.java`:** Handles text input and output in the log file, ensuring operations are recorded sequentially.
+    * Executes commands (`mkdir`, `create`, `rm`, `cp`, `mv`).
+    * Handles persistence (Save/Load `filesystem.dat`).
+* **`Journal.java`:** Handles writing logs to `journal.log`.
 
 ### 3. Package `com.fs.cli`
-* **`Main.java`:** Command Line Interface (Shell). Implements an infinite loop that reads user input, processes the command string, and calls simulator methods.
+* **`Main.java`**: Command Line Interface (Shell). Parses user input and executes simulator methods.
 
 ---
 
@@ -70,15 +69,14 @@ The project was divided into three main packages to organize responsibilities (S
 2.  Open the project in your IDE.
 3.  Run the main class: `src/main/java/com/fs/cli/Main.java`.
 
-### Available Shell Commands
-The system simulates a basic Linux terminal. Use the following commands:
+### Available Commands
 
-| Command | Description | Example |
+| Command | Description | Usage Example |
 | :--- | :--- | :--- |
 | `mkdir` | Creates a directory | `mkdir docs` |
-| `cd` | Navigates between folders | `cd docs` or `cd ..` |
-| `ls` | Lists current content | `ls` |
-| `touch` | Creates a file | `touch notes.txt` |
-| `rm` | Removes a file/folder | `rm notes.txt` |
-| `cp` | Copies a file | `cp notes.txt notes_bkp.txt` |
-| `mv` | Renames items | `mv notes.txt new_notes.txt` |
+| `cd` | Navigates between folders | `cd docs` |
+| `ls` | Lists content | `ls` |
+| `create` | Creates a file | `create notes.txt content...` |
+| `rm` | Removes file or folder | `rm notes.txt` |
+| `cp` | Copies a file | `cp notes.txt backup.txt` |
+| `mv` | Renames file or folder | `mv old.txt new.txt` |

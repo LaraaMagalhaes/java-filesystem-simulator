@@ -27,7 +27,6 @@ public class FileSystemSimulator {
             System.out.println("System restored successfully!");
         }
     }
-
     private void saveFileSystem() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE_PATH))) {
             oos.writeObject(this.root);
@@ -53,20 +52,15 @@ public class FileSystemSimulator {
         }
     }
 
-
-
     public void createDirectory(String name) {
         if (currentDirectory.getSubDirectoryByName(name) != null) {
             System.out.println("Error: the directory '" + name + "' already exists.");
             return;
         }
-        
         Directory newDir = new Directory(name);
         currentDirectory.addDirectory(newDir);
         System.out.println("Directory '" + name + "' created.");
-
         journal.log("CREATE_DIR", "Created directory '" + name + "' in " + currentDirectory.getName());
-        
         saveFileSystem();
     }
 
@@ -75,13 +69,10 @@ public class FileSystemSimulator {
             System.out.println("Error: the file '" + name + "' already exists.");
             return;
         }
-
         File newFile = new File(name, content);
         currentDirectory.addFile(newFile);
         System.out.println("File '" + name + "' created.");
-
         journal.log("CREATE_FILE", "Created file '" + name + "' in " + currentDirectory.getName());
-        
         saveFileSystem();
     }
 
@@ -110,6 +101,10 @@ public class FileSystemSimulator {
             this.currentDirectory = this.root;
             return;
         }
+        if (name.equals("..")) {
+             System.out.println("Navigation '..' not implemented in this version. Use '/' to return to root.");
+             return;
+        }
 
         Directory target = currentDirectory.getSubDirectoryByName(name);
         
@@ -121,7 +116,60 @@ public class FileSystemSimulator {
         }
     }
 
+    public void delete(String name) {
+        File file = currentDirectory.getFileByName(name);
+        if (file != null) {
+            currentDirectory.removeFile(file);
+            System.out.println("File '" + name + "' deleted.");
+            journal.log("DELETE_FILE", "Deleted file '" + name + "'");
+            saveFileSystem();
+            return;
+        }
+        Directory dir = currentDirectory.getSubDirectoryByName(name);
+        if (dir != null) {
+            currentDirectory.removeDirectory(dir);
+            System.out.println("Directory '" + name + "' deleted.");
+            journal.log("DELETE_DIR", "Deleted directory '" + name + "'");
+            saveFileSystem();
+            return;
+        }
 
+        System.out.println("Error: '" + name + "' not found.");
+    }
+
+    public void rename(String oldName, String newName) {
+        File file = currentDirectory.getFileByName(oldName);
+        if (file != null) {
+            file.setName(newName);
+            System.out.println("Renamed '" + oldName + "' to '" + newName + "'.");
+            journal.log("RENAME", "Renamed file " + oldName + " -> " + newName);
+            saveFileSystem();
+            return;
+        }
+
+        Directory dir = currentDirectory.getSubDirectoryByName(oldName);
+        if (dir != null) {
+            dir.setName(newName);
+            System.out.println("Renamed '" + oldName + "' to '" + newName + "'.");
+            journal.log("RENAME", "Renamed directory " + oldName + " -> " + newName);
+            saveFileSystem();
+            return;
+        }
+
+        System.out.println("Error: '" + oldName + "' not found.");
+    }
+
+    public void copyFile(String sourceName, String destName) {
+        File source = currentDirectory.getFileByName(sourceName);
+        
+        if (source == null) {
+            System.out.println("Error: Source file '" + sourceName + "' not found.");
+            return;
+        }
+
+        createFile(destName, source.getContent());
+        System.out.println("File copied successfully.");
+    }
     public String getCurrentPath() {
         return currentDirectory.getName();
     }
