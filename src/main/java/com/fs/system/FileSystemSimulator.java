@@ -15,36 +15,36 @@ public class FileSystemSimulator {
     }
     public void createDirectory(String name) {
         if (currentDirectory.getSubDirectoryByName(name) != null) {
-            System.out.println("Erro: O diretório '" + name + "' já existe.");
+            System.out.println("Error: the directory '" + name + "' already exists.");
             return;
         }
         
         Directory newDir = new Directory(name);
         currentDirectory.addDirectory(newDir);
-        System.out.println("Diretório '" + name + "' criado.");
+        System.out.println("Directory '" + name + "' created.");
         
     }
 
     public void createFile(String name, String content) {
         if (currentDirectory.getFileByName(name) != null) {
-            System.out.println("Erro: O arquivo '" + name + "' já existe.");
+            System.out.println("Error: the file '" + name + "' already exists.");
             return;
         }
 
         File newFile = new File(name, content);
         currentDirectory.addFile(newFile);
-        System.out.println("Arquivo '" + name + "' criado.");
+        System.out.println("File '" + name + "' created.");
         
     }
 
     public void listDirectory() {
-        System.out.println("Conteúdo de " + currentDirectory.getName() + ":");
+        System.out.println("Contents of " + currentDirectory.getName() + ":");
         
         List<Directory> subDirs = currentDirectory.getSubDirectories();
         List<File> files = currentDirectory.getFiles();
 
         if (subDirs.isEmpty() && files.isEmpty()) {
-            System.out.println("(vazio)");
+            System.out.println("(empty)");
             return;
         }
 
@@ -67,9 +67,9 @@ public class FileSystemSimulator {
         
         if (target != null) {
             this.currentDirectory = target;
-            System.out.println("Entrou em: " + name);
+            System.out.println("Entered: " + name);
         } else {
-            System.out.println("Erro: Diretório '" + name + "' não encontrado.");
+            System.out.println("Error: Directory '" + name + "' not found.");
         }
     }
 
